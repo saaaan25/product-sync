@@ -1,22 +1,19 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using DotNetEnv;
-using promociones.Data; // referencia a tu proyecto promociones-service, si defines algún DbContext
-using Microsoft.EntityFrameworkCore;
+using promociones.Services;
+
+Env.Load(); // cargar .env si usas variables locales
 
 var host = new HostBuilder()
-    .ConfigureFunctionsWorkerDefaults() // esto inicializa el Azure Functions Worker (no ASP.NET Core)
+    .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices((context, services) =>
     {
-        // Cargar variables del archivo .env
-        Env.Load();
+        // Registrar HttpClient para ProductoSyncService
+        services.AddHttpClient();
 
-        var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
-            ?? throw new InvalidOperationException("DATABASE_URL no está configurada.");
-
-        // Registrar el contexto de base de datos de tu proyecto promociones-service
-        services.AddDbContext<AppDBContext>(options =>
-            options.UseNpgsql(connectionString));
+        // Registrar el servicio de sincronización
+        services.AddScoped<ProductoSyncService>();
     })
     .Build();
 
