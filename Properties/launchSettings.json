@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "product_sync": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7267",
+      "launchBrowser": false
+    }
+  }
+}
